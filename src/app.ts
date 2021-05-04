@@ -16,6 +16,8 @@ const PASSWORD = 'password';
 
 const tokens: string[] = [];
 
+const module = await connect<Settings>();
+
 cp.execSync(`openssl req -x509 -newkey rsa:4096 -keyout ${AGENT_KEY} -out ${AGENT_CERT} -days 365 -nodes -subj '/CN=${CERT_NAME}'`);
 
 const app = express();
@@ -47,10 +49,9 @@ app.put('/data', (req, res) => {
     return res.status(401).end('Unauthorized');
 
   console.log('Received data', body);
+  module.broadcast('HellaCamera.data', body);
 
   res.json({ success: 'true' });
 })
 
 server.listen(PORT);
-
-const module = await connect<Settings>();
