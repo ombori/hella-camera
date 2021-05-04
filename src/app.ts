@@ -4,6 +4,7 @@ import fs from 'fs';
 import { connect } from '@ombori/ga-module';
 import express from 'express';
 import * as uuid from 'uuid';
+import jwt from 'jsonwebtoken';
 
 import { Settings } from './schema.js';
 
@@ -13,6 +14,7 @@ const AGENT_CERT = '/app/server.crt';
 const CERT_NAME = 'hella-camera-module';
 const USERNAME = 'login';
 const PASSWORD = 'password';
+const SECRET = 'secret';
 
 const tokens: string[] = [];
 
@@ -36,20 +38,21 @@ app.post('/auth', (req, res) => {
     return res.status(401).end('Invalid password');
   }
 
-  const token = uuid.v4();
+  const token = jwt.sign({ identity: username }, SECRET);
+
   tokens.push(token);
 
   console.log(`A new token added for user ${username}`);
   res.json({ token });
 });
 
-app.put('/data', (req, res) => {
+app.put('/apiv1/*', (req, res) => {
   const { body } = req;
   if (!tokens.some(token => req.headers.authorization === `Bearer ${token}`))
     return res.status(401).end('Unauthorized');
 
-  console.log('Received data', body);
-  module.broadcast('HellaCamera.data', body);
+  console.log('Received data', { body, url: req.path });
+  module.broadcast('HellaCamera.data', { body, url: req.path });
 
   res.json({ success: 'true' });
 })
