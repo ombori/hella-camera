@@ -1,0 +1,18 @@
+FROM node:14-slim as pre-build
+COPY package*.json ./
+RUN npm version 0.0.1
+
+FROM node:14-alpine
+
+WORKDIR /app/
+
+COPY --from=pre-build package*.json ./
+
+RUN apk add openssl
+RUN npm install --production && rm -rf /root/.npm
+
+COPY dist ./
+
+CMD ["node", "app.js"]
+
+EXPOSE 8080
