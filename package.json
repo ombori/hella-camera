@@ -1,6 +1,6 @@
 {
   "name": "ombori.hella-camera",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Hella Camera",
   "container-registry": "omborigridregistry.azurecr.io",
   "license": "UNLICENSED",
