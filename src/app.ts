@@ -43,7 +43,7 @@ app.post('/auth', (req, res) => {
   tokens.push(token);
 
   console.log(`A new token added for user ${username}`);
-  res.json({ token });
+  res.json({ access_token: token });
 });
 
 app.put('/apiv1/*', (req, res) => {
